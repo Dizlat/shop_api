@@ -38,7 +38,7 @@ class Review(models.Model):
 
 
 class StatusChoices(models.TextChoices):
-    new = ('new', 'Новый'),
+    new = ('new', 'Новый')
     in_progress = ('in_progress', 'В обработке')
     done = ('done', 'Выполнен')
     canceled = ('canceled', 'Отменён')
