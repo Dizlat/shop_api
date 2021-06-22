@@ -6,11 +6,13 @@ from main.models import *
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ('id', 'title', 'price', 'image')
+        fields = '__all__'
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Product
+        fields = '__all__'
 
 
 class ReviewSerializer(serializers.ModelSerializer):
