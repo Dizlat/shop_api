@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filters
 from rest_framework.generics import *
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -38,6 +39,24 @@ class ProductDetailView(RetrieveAPIView):
     serializer_class = ProductDetailSerializer
 
 # 3. Создание товаров, рудактирование, удаление, доступно только админам
+class CreateProductView(CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductDetailSerializer
+    permission_classes = [IsAdminUser]
+
+
+class UpdateProductView(UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductDetailSerializer
+    permission_classes = [IsAdminUser]
+
+
+class DeleteProductView(DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductDetailSerializer
+    permission_classes = [IsAdminUser]
+
+
 # 4. Создание отзывов, доступно только залогиненным пользователям
 # 5. Листинг отзывов (внутри деталей продукта) доступен всем
 # 6. Редактр и удаление отзыва может делать только автор
