@@ -3,6 +3,7 @@ from rest_framework.generics import *
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics, viewsets, status
 
 from .filters import ProductFilter
 from main.models import *
@@ -41,22 +42,39 @@ class ProductDetailView(RetrieveAPIView):
 
 
 # 3. Создание товаров, рудактирование, удаление, доступно только админам
-class CreateProductView(CreateAPIView):
+# class CreateProductView(CreateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductDetailSerializer
+#     permission_classes = [IsAdminUser]
+#
+#
+# class UpdateProductView(UpdateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductDetailSerializer
+#     permission_classes = [IsAdminUser]
+#
+#
+# class DeleteProductView(DestroyAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductDetailSerializer
+#     permission_classes = [IsAdminUser]
+
+class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
-    permission_classes = [IsAdminUser]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ProductFilter
 
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProductListSerializer
+        return self.serializer_class
 
-class UpdateProductView(UpdateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductDetailSerializer
-    permission_classes = [IsAdminUser]
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminUser()]
+        return []
 
-
-class DeleteProductView(DestroyAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductDetailSerializer
-    permission_classes = [IsAdminUser]
 
 
 # 4. Создание отзывов, доступно только залогиненным пользователям
