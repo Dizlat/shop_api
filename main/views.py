@@ -8,7 +8,7 @@ from rest_framework import generics, viewsets, status
 from .filters import ProductFilter
 from main.models import *
 from .serializers import *
-
+from .permissions import IsAuthorOrAdminPermission
 # 1. Список товаров, доступен всем пользователям
 # @api_view(['GET'])
 # def product_list(request):
@@ -73,18 +73,30 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
-        return []
-
-
+        return [IsAuthorOrAdminPermission()]
 
 # 4. Создание отзывов, доступно только залогиненным пользователям
-class CreateReview(CreateAPIView):
+# class CreateReview(CreateAPIView):
+#     queryset = Review.objects.all()
+#     serializer_class = ReviewSerializer
+#     permission_classes = [IsAuthenticated]
+#
+#     def get_serializer_context(self):
+#         return {'request': self.request}
+
+
+class ReviewViewSet(mixins.CreateModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,
+                    viewsets.GenericViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated]
 
-    def get_serializer_context(self):
-        return {'request': self.request}
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsAuthenticated()]
+        return
+
 
 # 5. Листинг отзывов (внутри деталей продукта) доступен всем
 # 6. Редактр и удаление отзыва может делать только автор
