@@ -16,5 +16,5 @@ class ProductFilter(FilterSet):
     price_to = django_filters.NumberFilter(field_name='price', lookup_expr='lte')
 
     class Meta:
-        Model = Product
+        model = Product
         fields = ('category', 'title', 'description', 'price_from', 'price_to')

@@ -24,5 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('products/', ProductListView.as_view()),
     path('products/<int:pk>/', ProductDetailView.as_view()),
-
+    path('reviews/', CreateReview.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

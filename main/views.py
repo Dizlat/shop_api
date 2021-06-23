@@ -1,12 +1,12 @@
-from django_filters import rest_framework as filters
+import django_filters.rest_framework as filters
 from rest_framework.generics import *
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .filters import ProductFilter
 from main.models import *
-from  .serializers import *
+from .serializers import *
 
 # 1. Список товаров, доступен всем пользователям
 # @api_view(['GET'])
@@ -33,10 +33,12 @@ class ProductListView(ListAPIView):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ProductFilter
 
+
 # 2. Дутали товаров, доступен всем
 class ProductDetailView(RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
+
 
 # 3. Создание товаров, рудактирование, удаление, доступно только админам
 class CreateProductView(CreateAPIView):
@@ -58,6 +60,14 @@ class DeleteProductView(DestroyAPIView):
 
 
 # 4. Создание отзывов, доступно только залогиненным пользователям
+class CreateReview(CreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
 # 5. Листинг отзывов (внутри деталей продукта) доступен всем
 # 6. Редактр и удаление отзыва может делать только автор
 # 7. Заказ может создать любой залогиненый пользователь
