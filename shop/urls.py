@@ -24,6 +24,8 @@ from main.views import *
 
 router = SimpleRouter()
 router.register('products', ProductViewSet)
+router.register('reviews', ReviewViewSet)
+router.register('orders', OrderViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,5 +36,5 @@ urlpatterns = [
     # path('api/v1/products/<int:pk>/', ProductViewSet.as_view(
     #     {'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}
     # )),
-    path('api/v1/reviews/', CreateReview.as_view())
+    # path('api/v1/reviews/', CreateReview.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
