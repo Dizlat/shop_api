@@ -112,6 +112,11 @@ class OrderViewSet(viewsets.ModelViewSet):
         else:
             return [DenyAll()]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(user=self.request.user)
+        return queryset
 
 # 5. Листинг отзывов (внутри деталей продукта) доступен всем
 # 6. Редактр и удаление отзыва может делать только автор
@@ -119,3 +124,8 @@ class OrderViewSet(viewsets.ModelViewSet):
 # 8. Список заказов: пользователь может видит только свои заказы, админы видят все
 # 9. редактр заказы может только админ
 
+#TODO: фильтрация по заказам
+#TODO: пагинация
+#TODO: сортировка
+#TODO: Тесты
+#TODO: документация
