@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import status
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import *
@@ -28,8 +29,8 @@ class ActivationView(APIView):
             return Response('Ваш аккаунт успешно актевирован', status=status.HTTP_200_OK)
 
 
-class LoginView():
-
+class LoginView(ObtainAuthToken):
+    serializer_class = LoginSerializer
 
 
 class LogoutView(APIView):

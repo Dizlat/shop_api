@@ -30,6 +30,7 @@ router.register('orders', OrderViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(router.urls)),
+    path('api/v1/', include('account.urls')),
     # path('api/v1/products/', ProductViewSet.as_view(
     #     {'post': 'create', 'get': 'list'}
     # )),
