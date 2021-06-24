@@ -1,4 +1,5 @@
 import django_filters.rest_framework as filters
+from rest_framework.filters import OrderingFilter
 from rest_framework.generics import *
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
@@ -29,12 +30,12 @@ from .permissions import IsAuthorOrAdminPermission, DenyAll
 #         serializer_queryset = serializer.data
 #         return Response(data=serializer_queryset, status=status.HTTP_200_OK)
 
-
-class ProductListView(ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductListSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = ProductFilter
+#
+# class ProductListView(ListAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductListSerializer
+#     filter_backends = (filters.DjangoFilterBackend,)
+#     filterset_class = ProductFilter
 
 
 # 2. Дутали товаров, доступен всем
@@ -64,8 +65,9 @@ class ProductDetailView(RetrieveAPIView):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (filters.DjangoFilterBackend, OrderingFilter)
     filterset_class = ProductFilter
+    ordering_fields = ['title', 'price']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -125,7 +127,5 @@ class OrderViewSet(viewsets.ModelViewSet):
 # 9. редактр заказы может только админ
 
 #TODO: фильтрация по заказам
-#TODO: пагинация
-#TODO: сортировка
 #TODO: Тесты
 #TODO: документация
