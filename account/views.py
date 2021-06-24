@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from .serializers import *
 
 # 1. Регистрация
 # 2. Активация
@@ -11,15 +13,23 @@ from rest_framework.views import APIView
 
 
 class RegisterView(APIView):
-    pass
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response('Вам на почту отпрален код подтверждения', status=status.HTTP_201_CREATED)
 
 
 class ActivationView(APIView):
-    pass
+    def post(self, request):
+        serializer = ActivationSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.activate()
+            return Response('Ваш аккаунт успешно актевирован', status=status.HTTP_200_OK)
 
 
 class LoginView():
-    pass
+
 
 
 class LogoutView(APIView):
