@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
 
 User = get_user_model()
@@ -50,9 +50,23 @@ class ActivationSerializer(serializers.Serializer):
         user.save()
 
 
-
 class LoginSerializer(serializers.Serializer):
-    pass
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        if email and password:
+            user = authenticate(username=email, password=password, request=self.context.get('request'))
+            # user = User.objects.filter(email=email).first()
+            if not user:
+                raise serializers.ValidationError('Неверно указаны данные')
+        else:
+            raise serializers.ValidationError('Заполните пустые поля')
+        attrs['user'] = user
+        return attrs
 
 
 class ForgotPasswordSerializer(serializers.Serializer):
