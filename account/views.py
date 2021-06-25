@@ -5,9 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import *
 
-# 1. Регистрация
-# 2. Активация
-# 3. login
+
 # 4. Востановление пароля
 # 5. Смена пароля
 # 6, Профиль пользователя
