@@ -1,4 +1,5 @@
 import django_filters.rest_framework as filters
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import *
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -77,7 +78,17 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
+        elif self.action == 'create_review':
+            return [IsAuthenticated()]
         return []
+
+    #api/v1/products/id/create_review
+    @action(detail=True, methods=['POST'])
+    def create_review(self, request, pk):
+        request.data['product'] = pk
+        serializer = ReviewSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 # 4. Создание отзывов, доступно только залогиненным пользователям
 # class CreateReview(CreateAPIView):

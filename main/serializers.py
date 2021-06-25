@@ -1,6 +1,9 @@
 from rest_framework import serializers
-
+from django.contrib.auth import get_user_model
 from main.models import *
+
+
+User = get_user_model()
 
 
 class ProductListSerializer(serializers.ModelSerializer):
@@ -17,6 +20,18 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['reviews'] = ReviewSerializer(instance.reviews.all(), many=True).data
+        return representation
+
+
+class ReviewAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not instance.first_name and not instance.last_name:
+            representation['full_name'] = 'Анонимный пользователь'
         return representation
 
 
@@ -40,6 +55,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         attrs['author'] = request.user
         return attrs
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['author'] = ReviewAuthorSerializer(instance.author).data
+        return rep
 
 
 class OrderItemsSerializer(serializers.ModelSerializer):
