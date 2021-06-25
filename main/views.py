@@ -41,9 +41,9 @@ from .permissions import IsAuthorOrAdminPermission, DenyAll
 
 
 # 2. Дутали товаров, доступен всем
-class ProductDetailView(RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductDetailSerializer
+# class ProductDetailView(RetrieveAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductDetailSerializer
 
 
 # 3. Создание товаров, рудактирование, удаление, доступно только админам
@@ -92,6 +92,22 @@ class ProductViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    #/api/v1/products/id/like/
+    @action(detail=True, methods=['POST'])
+    def like(self, request, pk):
+        product = self.get_object()
+        user = request.user
+        like_obj, created = WishList.objects.get_or_create(product=product, user=user)
+
+        if like_obj.is_liked:
+            like_obj.is_liked = False
+            like_obj.save()
+            return Response('disliked')
+        else:
+            like_obj.is_liked = True
+            like_obj.save()
+            return Response('liked')
 
 
 # 4. Создание отзывов, доступно только залогиненным пользователям
