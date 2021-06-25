@@ -17,9 +17,16 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
+    def get_rating(self, instance):
+        total_rating = sum(instance.reviews.values_list('rating', flat=True))
+        reviews_count = instance.reviews.count()
+        rating = total_rating / reviews_count if reviews_count > 0 else 0
+        return round(rating, 1)
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['reviews'] = ReviewSerializer(instance.reviews.all(), many=True).data
+        representation['rating'] = self.get_rating(instance)
         return representation
 
 

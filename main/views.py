@@ -1,3 +1,4 @@
+from django.db.models import Avg
 import django_filters.rest_framework as filters
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
