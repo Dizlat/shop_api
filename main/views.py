@@ -85,10 +85,13 @@ class ProductViewSet(viewsets.ModelViewSet):
     #api/v1/products/id/create_review
     @action(detail=True, methods=['POST'])
     def create_review(self, request, pk):
-        request.data['product'] = pk
-        serializer = ReviewSerializer(data=request.data, context={'request': request})
+        data = request.data.copy()
+        data['product'] = pk
+        serializer = ReviewSerializer(data=data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 # 4. Создание отзывов, доступно только залогиненным пользователям
 # class CreateReview(CreateAPIView):
