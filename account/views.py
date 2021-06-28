@@ -35,6 +35,7 @@ class LoginView(ObtainAuthToken):
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
         Token.objects.filter(user=request.user).delete()
         return Response('Вы успешно вышли')
@@ -42,11 +43,30 @@ class LogoutView(APIView):
 
 class ResetPasswordView(APIView):
     def post(self, request):
-        pass
+        serializer = ForgotPasswordSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.send_reset_email()
+            return Response('Вам отправлен код для смены пароля', status=status.HTTP_200_OK)
+
+
+
+class ResetPasswordCompleteView(APIView):
+    def post(self, request):
+        serializer = CreateNewPasswordSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.create_pass()
+            return Response('Пароль успешно обновлен', status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(APIView):
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.set_new_password()
+            return Response('Вы успешно сменили пароль', status=status.HTTP_200_OK)
+
 
 
 class UserProfileView(APIView):
