@@ -33,11 +33,11 @@ from .permissions import IsAuthorOrAdminPermission, DenyAll
 #         return Response(data=serializer_queryset, status=status.HTTP_200_OK)
 
 #
-# class ProductListView(ListAPIView):
-#     queryset = Product.objects.all()
-#     serializer_class = ProductListSerializer
-#     filter_backends = (filters.DjangoFilterBackend,)
-#     filterset_class = ProductFilter
+class ProductListView(ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductListSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ProductFilter
 
 
 # 2. Дутали товаров, доступен всем
