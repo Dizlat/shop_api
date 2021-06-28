@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets, status
 
-from .filters import ProductFilter
+from .filters import ProductFilter, OrderFilter
 from main.models import *
 from .serializers import *
 from .permissions import IsAuthorOrAdminPermission, DenyAll
@@ -136,6 +136,9 @@ class ReviewViewSet(mixins.CreateModelMixin,
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filter_backends = (filters.DjangoFilterBackend, OrderingFilter)
+    filterset_class = OrderFilter
+    ordering_fields = ['total_sum', 'created_at']
 
     def get_permissions(self):
         if self.action in ['create', 'list', 'retrieve']:
@@ -151,11 +154,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(user=self.request.user)
         return queryset
 
-# 5. Листинг отзывов (внутри деталей продукта) доступен всем
-# 6. Редактр и удаление отзыва может делать только автор
-# 7. Заказ может создать любой залогиненый пользователь
-# 8. Список заказов: пользователь может видит только свои заказы, админы видят все
-# 9. редактр заказы может только админ
+
+
 
 #TODO: фильтрация по заказам
 #TODO: Тесты

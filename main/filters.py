@@ -18,3 +18,16 @@ class ProductFilter(FilterSet):
     class Meta:
         model = Product
         fields = ('category', 'title', 'description', 'price_from', 'price_to')
+
+
+class OrderFilter(FilterSet):
+    """фильтрация по сумме(от, до)
+    по  товару, по статусу, по дате"""
+    total_sum_from = django_filters.NumberFilter(field_name='total_sum', lookup_expr='gte')
+    total_sum_to = django_filters.NumberFilter(field_name='total_sum', lookup_expr='lte')
+    created_at = django_filters.DateTimeFromToRangeFilter(field_name='created_at')
+    product = django_filters.CharFilter(field_name='products__product__title', lookup_expr='icontains')
+
+    class Meta:
+        model = Order
+        fields = ('total_sum_from', 'total_sum_to', 'created_at', 'product')
